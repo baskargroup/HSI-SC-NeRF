@@ -1,0 +1,52 @@
+------------------------------------------------------------------
+###--------------- 1. Pose Estimation (COLMAP) using psuedo RGB 
+------------------------------------------------------------------
+
+time ns-process-data images   \
+--data    \
+--output-dir p   \
+--sfm-tool colmap   --matching-method sequential   --feature-type any   --matcher-type any   \
+--use-single-camera-mode   --same-dimensions   --no-refine-intrinsics \
+--camera-type simple_pinhole   --num-downscales 3  
+
+
+
+
+
+------------------------------------------------------------------
+###--------------- 2. Train HSI 
+------------------------------------------------------------------
+
+
+ns-train nerfacto  \
+    --data   \
+    --output-dir   \
+    --pipeline.model.num-output-channels   \
+    --pipeline.model.predict-normals True   \
+    --viewer.quit-on-train-completion True  \
+    --pipeline.model.far_plane=  --pipeline.model.near_plane= \
+    --pipeline.datamanager.pixel-sampler.max-num-iterations   \
+    --pipeline.model.camera-optimizer.mode   \
+    --pipeline.model.hsi_loss_mult  \
+    --pipeline.model.angular_loss_mult  \
+    --max-num-iterations 
+
+
+------------------------------------------------------------------
+###--------------- 3. Evaluation 
+------------------------------------------------------------------
+
+ns-eval  \
+--load-config   \
+--output-path  eval_metrics.json 
+
+
+------------------------------------------------------------------
+###--------------- 4. PCD HSI
+------------------------------------------------------------------
+
+#--- Pear
+ns-export hsi-pointcloud \
+    --load-config  \
+    --output-dir \
+    --num-points 
